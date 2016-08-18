@@ -15,7 +15,10 @@ This repository is used for Online Progress Reporting of IoT Academy in Compfest
 4. Telah mengimplementasikan beberapa mockup UI/UX dari aplikasi android menggunakan Android Studio IDE
 
 ### Progress Report `19/08/2016`
-soon
+1. Telah meng-update library yang digunakan dengan menggunakan [MIRF](https://github.com/aaronds/arduino-nrf24l01/tree/master/Mirf) sebagai komunikasi wireless
+2. Telah melakukan pre-prototype (prototype on project board) dari kedua device pada Park.Me yakni node client menggunakan Arduino CERDAS F1 (Arduino UNO compatible) dan hub menggunakan Intel Galileo yang ditunjukkan pada folder dokumentasi
+3. Telah mengimplementasikan semua mockup UI/UX dari aplikasi android menggunakan Android Studio IDE serta ditunjang dengan flowchart
+4. Telah menyelesaikan 50% arduino code untuk kedua device, hanya tinggal menyelesaikan komunikasi antara node client dengan hub serta konektivitas ke internet
 
 ### Progress Report `26/08/2016`
 soon

@@ -36,7 +36,7 @@ void setup() {
   Serial.println("Setting measurement mode to continous.");
   error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous
   if(error != 0) // If there is an error, print it out.
-    Serial.println(compass.GetErrorText(error))
+    Serial.println(compass.GetErrorText(error));
 }
 
 void loop()

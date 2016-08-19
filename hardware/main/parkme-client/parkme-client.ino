@@ -11,50 +11,95 @@
 
 //define libraries
 #include <Wire.h>
+#include <HMC5883L.h>
 
 //define pins
-#define addr 0x1E
+HMC5883L compass;
+int error = 0;
 
 //define global variables
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  Wire.begin();
-  Wire.beginTransmission(addr); //start talking
-  Wire.write(0x02); // Set the Register
-  Wire.write(0x00); // Tell the HMC5883 to Continuously Measure
-  Wire.endTransmission();
+  Serial.println("Starting the I2C interface.");
+  Wire.begin(); // Start the I2C interface.
+
+  Serial.println("Constructing new HMC5883L");
+  compass = HMC5883L(); // Construct a new HMC5883 compass.
+
+  Serial.println("Setting scale to +/- 1.3 Ga");
+  error = compass.SetScale(1.3); // Set the scale of the compass.
+  if(error != 0) // If there is an error, print it out.
+    Serial.println(compass.GetErrorText(error));
+
+  Serial.println("Setting measurement mode to continous.");
+  error = compass.SetMeasurementMode(Measurement_Continuous); // Set the measurement mode to Continuous
+  if(error != 0) // If there is an error, print it out.
+    Serial.println(compass.GetErrorText(error));
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  int x,y,z; //triple axis data
+void loop()
+{
+  // Retrive the raw values from the compass (not scaled).
+  MagnetometerRaw raw = compass.ReadRawAxis();
+  // Retrived the scaled values from the compass (scaled to the configured scale).
+  MagnetometerScaled scaled = compass.ReadScaledAxis();
 
- //Tell the HMC what regist to begin writing data into
- Wire.beginTransmission(addr);
- Wire.write(0x03); //start with register 3.
- Wire.endTransmission();
+  // Values are accessed like so:
+  int MilliGauss_OnThe_XAxis = scaled.XAxis;// (or YAxis, or ZAxis)
 
- //Read the data.. 2 bytes for each axis.. 6 total bytes
- Wire.requestFrom(addr, 6);
- if(6<=Wire.available()){
-   x = Wire.read()<<8; //MSB  x
-   x |= Wire.read(); //LSB  x
-   z = Wire.read()<<8; //MSB  z
-   z |= Wire.read(); //LSB z
-   y = Wire.read()<<8; //MSB y
-   y |= Wire.read(); //LSB y
- }
+  // Calculate heading when the magnetometer is level, then correct for signs of axis.
+  float heading = atan2(scaled.YAxis, scaled.XAxis);
 
- // Show Values
- Serial.print("X Value: ");
- Serial.println(x);
- Serial.print("Y Value: ");
- Serial.println(y);
- Serial.print("Z Value: ");
- Serial.println(z);
- Serial.println();
+  // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+  // Find yours here: http://www.magnetic-declination.com/
+  // Mine is: 2� 37' W, which is 2.617 Degrees, or (which we need) 0.0456752665 radians, I will use 0.0457
+  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+  float declinationAngle = 0.0457;
+  heading += declinationAngle;
 
- delay(1000);
+  // Correct for when signs are reversed.
+  if(heading < 0)
+    heading += 2*PI;
+
+  // Check for wrap due to addition of declination.
+  if(heading > 2*PI)
+    heading -= 2*PI;
+
+  // Convert radians to degrees for readability.
+  float headingDegrees = heading * 180/M_PI;
+
+  // Output the data via the serial port.
+  Output(raw, scaled, heading, headingDegrees);
+
+  // Normally we would delay the application by 66ms to allow the loop
+  // to run at 15Hz (default bandwidth for the HMC5883L).
+  // However since we have a long serial out (104ms at 9600) we will let
+  // it run at its natural speed.
+  // delay(66);
+}
+
+// Output the data down the serial port.
+void Output(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float headingDegrees)
+{
+   Serial.print("Raw:\t");
+   Serial.print(raw.XAxis);
+   Serial.print("   ");
+   Serial.print(raw.YAxis);
+   Serial.print("   ");
+   Serial.print(raw.ZAxis);
+
+   Serial.print("   \tScaled:\t");
+   Serial.print(scaled.XAxis);
+   Serial.print("   ");
+   Serial.print(scaled.YAxis);
+   Serial.print("   ");
+   Serial.print(scaled.ZAxis);
+
+   Serial.print("   \tHeading:\t");
+   Serial.print(heading);
+   Serial.print(" Radians   \t");
+   Serial.print(headingDegrees);
+   Serial.println(" Degrees   \t");
 }

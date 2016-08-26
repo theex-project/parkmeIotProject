@@ -72,5 +72,12 @@ void loop()
   if (!client.connected()) {
     reconnect();
   }
+
+  //get Sensor Value from nano as hub extention
+  String data = " ";
+  if (Serial.available() > 0) {
+    data = Serial.read();
+  }
+  Serial.println(data);
   client.loop();
 }

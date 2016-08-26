@@ -21,7 +21,9 @@ This repository is used for Online Progress Reporting of IoT Academy in Compfest
 4. Telah menyelesaikan 50% arduino code untuk kedua device, hanya tinggal menyelesaikan komunikasi antara node client dengan hub serta konektivitas ke internet
 
 ### Progress Report `26/08/2016`
-soon
+1. Telah melakukan validasi sensor pada node client yakni sensor magnetik dengan melihat dari berdasarkan koordinat medan magnet dari sumbu koordinat kartesius X, Y dan Z
+2. Telah menyelesaikan 65% arduino code untuk kedua device
+3. Telah mengimplementasikan fitur login dan register pada aplikasi mobile
 
 ### Progress Report `02/09/2016`
 soon

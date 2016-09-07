@@ -1,5 +1,27 @@
+/*
+ Park.Me! Project by Theex.org
+ Transportation and Public Facility Project Section based on Internet of Things
+ This code is in the private domain
+
+ This project also in github.com/theex-project/parkmeIotProject
+ Regards, Developer
+
+ Copyright (c) 2016 Copyright Holder All Rights Reserved.
+*/
+
+//define libraries
 #include <Wire.h> library I2C
+#include <SPI.h>
+#include <Mirf.h>
+#include <nRF24L01.h>
+#include <MirfHardwareSpiDriver.h>
+
+//define pinss
+
+//define global variables
 #define sensor 0x1E // alamat default address sensor hmc5883l
+const char payload_length = 32;
+byte data[payload_length];
 
 void setup() {
   Serial.begin(9600);
@@ -9,6 +31,13 @@ void setup() {
   Wire.write(0x00);
   Wire.endTransmission();
   pinMode(9, OUTPUT);
+  //NRF
+  Mirf.spi = &MirfHardwareSpi;
+  Mirf.init();
+  Mirf.setTADDR((byte *)"serve");
+  Mirf.payload = payload_length;
+  Mirf.channel = 101;
+  Mirf.config();
 }
 
 void loop() {
@@ -18,24 +47,34 @@ void loop() {
   Wire.write(0x07);
   Wire.endTransmission();
 
-
   //Read data from each axis, 2 registers per axis
   Wire.requestFrom(sensor, 6);
   if (6 <= Wire.available()) {
     Z = Wire.read() << 8; //Z msb
     Z |= Wire.read(); //Z lsb
-
   }
 
-  Serial.print("  Medan magnet sumbu Z : ");  // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
+  Serial.print("Medan magnet sumbu Z : ");  // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
   Serial.println(Z);
 
   if (( Z <= 400 )  | (Z >= 450)) {
     digitalWrite(9, HIGH);
-  }
-  else {
+    sendData(1);
+  } else {
     digitalWrite(9, LOW);
-
+    sendData(0);
   }
+
  delay (1000);
+}
+
+void sendData(float sensorParam) {
+  String sensorVal = String(sensorParam);
+  char data[32];
+  sensorVal.toCharArray(data, 32);
+  Mirf.send((byte*) data);
+  while (Mirf.isSending()) {
+    /* code */
+  }
+  delay(1000);
 }

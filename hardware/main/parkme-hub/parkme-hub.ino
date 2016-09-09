@@ -74,7 +74,7 @@ void loop()
   }
 
   // Get Sensor Value from nano as hub extention
-  char* data = " ";
+  int data ;
   if (Serial.available() > 0) {
     data = Serial.read();
   }

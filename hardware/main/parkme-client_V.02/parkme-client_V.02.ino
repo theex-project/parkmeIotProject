@@ -62,22 +62,22 @@ void loop() {
 
   if (( Z <= 400 ) && (Z >= 300)) {
     digitalWrite(7, LOW);
-    sendData(1);
+    //sendData(1);
   } else {
     digitalWrite(7, HIGH);
-    sendData(0);
+   // sendData(0);
   }
 
  //delay (1000);
 }
 
-void sendData(float sensorParam) {
-  String sensorVal = String(sensorParam);
-  char data[32];
-  sensorVal.toCharArray(data, 32);
-  Mirf.send((byte*) data);
-  while (Mirf.isSending()) {
-    /* code */
-  }
-  delay(1000);
-}
+//void sendData(float sensorParam) {
+//  String sensorVal = String(sensorParam);
+//  char data[32];
+//  sensorVal.toCharArray(data, 32);
+//  Mirf.send((byte*) data);
+//  while (Mirf.isSending()) {
+//    /* code */
+//  }
+//  delay(1000);
+//}

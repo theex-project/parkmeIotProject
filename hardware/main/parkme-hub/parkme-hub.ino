@@ -1,12 +1,12 @@
 /*
- Park.Me! Project by Theex.org
- Transportation and Public Facility Project Section based on Internet of Things
- This code is in the private domain
+  Park.Me! Project by Theex.org
+  Transportation and Public Facility Project Section based on Internet of Things
+  This code is in the private domain
 
- This project also in github.com/theex-project/parkmeIotProject
- Regards, Developer
+  This project also in github.com/theex-project/parkmeIotProject
+  Regards, Developer
 
- Copyright (c) 2016 Copyright Holder All Rights Reserved.
+  Copyright (c) 2016 Copyright Holder All Rights Reserved.
 */
 
 //define libraries
@@ -25,7 +25,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  for (int i=0;i<length;i++) {
+  for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
@@ -73,12 +73,13 @@ void loop()
     reconnect();
   }
 
-  // Get Sensor Value from nano as hub extention
-  int data ;
-  if (Serial.available() > 0) {
-    data = Serial.read();
+  //get Sensor Value from nano as hub extention
+  int d = 0;
+  while (Serial.available() > 0) {
+    d = Serial.read();
   }
-  Serial.println(data);
+  char* data = (char*)d;
+  //Serial.println(data);
   client.publish("admintes/data", data);
   client.loop();
 }

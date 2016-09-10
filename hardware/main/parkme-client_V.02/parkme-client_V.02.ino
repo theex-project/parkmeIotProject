@@ -55,8 +55,8 @@ void loop() {
     Z |= Wire.read(); //Z lsb
 
   }
-    
-  
+
+
   Serial.print("Medan magnet sumbu Z : ");  // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
   Serial.println(Z);
 

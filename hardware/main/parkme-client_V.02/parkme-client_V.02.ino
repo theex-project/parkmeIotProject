@@ -17,12 +17,24 @@
 #include <MirfHardwareSpiDriver.h>
 
 //define pinss
+#define ledPin 5
 
 //define global variables
 #define sensor 0x1E // alamat default address sensor hmc5883l
 const char payload_length = 32;
 byte data[payload_length];
 // float sensorParam = 0 ;
+
+void sendData(int sensorParam) {
+ String sensorVal = String(sensorParam);
+ char data[32];
+ sensorVal.toCharArray(data, 32);
+ Mirf.send((byte*) data);
+ // while (Mirf.isSending()) {
+ //   /* code */
+ // }
+ delay(1000);
+}
 
 void setup() {
   Serial.begin(9600);
@@ -31,18 +43,18 @@ void setup() {
   Wire.write(0x02);
   Wire.write(0x00);
   Wire.endTransmission();
-  pinMode(7, OUTPUT);
+  pinMode(ledPin, OUTPUT);
   //NRF
   Mirf.spi = &MirfHardwareSpi;
   Mirf.init();
   Mirf.setTADDR((byte *)"serve");
   Mirf.payload = payload_length;
-  Mirf.channel = 101;
+  Mirf.channel = 123;
   Mirf.config();
 }
 
 void loop() {
-  int X, Y, Z; //triple axis data
+  int Z; //triple axis data
 
   Wire.beginTransmission(sensor);
   Wire.write(0x05);
@@ -56,28 +68,15 @@ void loop() {
 
   }
 
-
-  Serial.print("Medan magnet sumbu Z : ");  // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
+  //Serial.print("Medan magnet sumbu Z : ");  // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
   Serial.println(Z);
 
-  if (( Z <= 400 ) && (Z >= 300)) {
-    digitalWrite(7, LOW);
-    //sendData(1);
+  if ((Z >= 200) && (Z <= 400)) {
+    digitalWrite(ledPin, HIGH);
   } else {
-    digitalWrite(7, HIGH);
-   // sendData(0);
+    digitalWrite(ledPin, LOW);
   }
 
- //delay (1000);
+  sendData(Z);
+  delay (1000);
 }
-
-//void sendData(float sensorParam) {
-//  String sensorVal = String(sensorParam);
-//  char data[32];
-//  sensorVal.toCharArray(data, 32);
-//  Mirf.send((byte*) data);
-//  while (Mirf.isSending()) {
-//    /* code */
-//  }
-//  delay(1000);
-//}

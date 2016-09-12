@@ -69,17 +69,28 @@ void setup() {
 
 void loop()
 {
-  if (!client.connected()) {
-    reconnect();
-  }
+  // if (!client.connected()) {
+  //   reconnect();
+  // }
 
   //get Sensor Value from nano as hub extention
   int d = 0;
   while (Serial.available() > 0) {
     d = Serial.read();
   }
-  char* data = (char*)d;
-  //Serial.println(data);
-  client.publish("admintes/data", data);
-  client.loop();
+  Serial.println(d);
+//  int calculatedData = parkmeFormula(d);
+//  char* data = (char*)calculatedData;
+//  Serial.println(data);
+  // client.publish("admintes/data", data);
+  // client.loop();
+  delay(1000);
+}
+
+int parkmeFormula(int sensorParam) {
+  if ((sensorParam >= 200) && (sensorParam <= 400)) {
+    return 0;
+  } else {
+    return 1;
+  }
 }

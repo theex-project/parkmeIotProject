@@ -30,10 +30,7 @@ void sendData(int sensorParam) {
  char data[32];
  sensorVal.toCharArray(data, 32);
  Mirf.send((byte*) data);
- // while (Mirf.isSending()) {
- //   /* code */
- // }
- delay(1000);
+ //delay(1000);
 }
 
 void setup() {
@@ -54,7 +51,7 @@ void setup() {
 }
 
 void loop() {
-  int Z; //triple axis data
+  int Z; // sumbu Z pada sensor HMCL5883l
 
   Wire.beginTransmission(sensor);
   Wire.write(0x05);
@@ -65,19 +62,16 @@ void loop() {
   if (6 <= Wire.available()) {
     Z = Wire.read() << 8; //Z msb
     Z |= Wire.read(); //Z lsb
-
   }
+    
+  Serial.println(Z); // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
 
-  //Serial.print("Medan magnet sumbu Z : ");  // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
-  Serial.println(Z);
-
-  if ((Z >= 200) && (Z <= 400)) {
-    digitalWrite(ledPin, HIGH); // kondisi normal (tidak ada mobil dan lampu menyala
+  if ((Z >= 400) && (Z <= 600)) {   // kalibrasi sesuai tempat
+    digitalWrite(ledPin, HIGH); // kondisi normal (tidak ada mobil dan lampu menyala)
     sendData(0);
   } else {
-    digitalWrite(ledPin, LOW); // kondis ada mobil dan lampu mati
+    digitalWrite(ledPin, LOW); // kondisi ada mobil dan lampu mati
     sendData(1);
   }
-
   delay (1000);
 }

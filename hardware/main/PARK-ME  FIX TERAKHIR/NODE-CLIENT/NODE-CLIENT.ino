@@ -66,7 +66,7 @@ void loop() {
     
   Serial.println(Z); // MEDAN MAGNET SUMBU Z BERADA PADA RANGE 300 - 500
 
-  if ((Z >= 400) && (Z <= 600)) {   // kalibrasi sesuai tempat
+  if ((Z >= 200) && (Z <= 400)) {   // kalibrasi sesuai tempat
     digitalWrite(ledPin, HIGH); // kondisi normal (tidak ada mobil dan lampu menyala)
     sendData(0);
   } else {
